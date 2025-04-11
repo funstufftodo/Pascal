@@ -9,4 +9,6 @@ add_executable(compiler main.cpp
         utils/ll1_constructor.cpp
         types.h
         types.cpp
+        lexer.h
+        lexer.cpp
 )
