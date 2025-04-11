@@ -1,6 +1,0 @@
-# ninja log v6
-13	655	7660806068243745	CMakeFiles/compiler.dir/types.cpp.obj	db70f1532f6e72c
-5	993	7660806068175025	CMakeFiles/compiler.dir/utils/left_recursion.cpp.obj	218ed7dff89d8264
-9	1354	7660806068204679	CMakeFiles/compiler.dir/utils/ll1_constructor.cpp.obj	c21c3c324a545b19
-1	1480	7660806068136203	CMakeFiles/compiler.dir/main.cpp.obj	5b4988d0d209e978
-1481	2036	7660806082927517	compiler.exe	710706103131469a
