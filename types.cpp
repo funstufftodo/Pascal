@@ -2,6 +2,13 @@
 #include <iostream>
 
 namespace AST {
+    bool isRelop(std::string op) {
+        if(op == ">" || op == "<" || op == "<=" || op == ">=" || op == "<>") {
+            return true;
+        }
+        return false;
+    }
+
     std::unique_ptr<TypeBase> TypeBase::CalcType(std::unique_ptr<TypeBase>&& anotherType, std::string op, bool& ok, std::string& errMsg)
     {
         ok = false;
