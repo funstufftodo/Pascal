@@ -68,7 +68,7 @@ namespace AST {
             return id;
         }
 
-        bool isBaseType() {
+        bool IsBasicType() {
             if (id == BOOLEAN || id == INTEGER || id == REAL || id == CHAR) {
                 return true;
             }
