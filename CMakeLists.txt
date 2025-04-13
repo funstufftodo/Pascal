@@ -11,4 +11,6 @@ add_executable(compiler main.cpp
         types.cpp
         lexer.h
         lexer.cpp
+        symboltable.h
+        ast.h
 )
