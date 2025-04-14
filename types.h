@@ -110,13 +110,13 @@ namespace AST {
         }
 
         virtual std::unique_ptr<TypeBase>
-        CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &error_msg);
+        CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg);
 
         virtual std::unique_ptr<TypeBase>
-        CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &error_msg);
+        CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &errMsg);
 
         virtual std::unique_ptr<TypeBase>
-        CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &error_msg);
+        CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &errMsg);
 
     protected:
         std::unique_ptr<TypeBase> targetType;
@@ -270,10 +270,10 @@ namespace AST {
         bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
 
         std::vector<std::unique_ptr<TypeBase>> GetSubTypes() {
-            std::vector<std::unique_ptr<TypeBase>> ret;
+            std::vector<std::unique_ptr<TypeBase>> result;
             for (auto &type: subTypes)
-                ret.push_back(type->Copy());
-            return std::move(ret);
+                result.push_back(type->Copy());
+            return std::move(result);
         }
 
     private:
@@ -331,10 +331,10 @@ namespace AST {
         bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
 
         std::vector<int> GetOffset() {
-            std::vector<int> ret;
+            std::vector<int> result;
             for (auto &dim: dimensions)
-                ret.push_back(dim.first);
-            return ret;
+                result.push_back(dim.first);
+            return result;
         }
 
     private:
