@@ -12,12 +12,13 @@ namespace AST {
     TypeBase::CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) {
         ok = false;
         errMsg = std::string("operation ") + op + " is not compatible with type " + ToString();
-        if (isRelop(op))
+        if (isRelop(op)) {
             return GenType(BOOLEAN);
+        }
 
-        if (anotherType->IsBasicType())
+        if (anotherType->IsBasicType()) {
             return std::move(anotherType);
-
+        }
         return GenType(VOID);
     }
 
@@ -37,22 +38,22 @@ namespace AST {
 
     std::unique_ptr<TypeBase>
     WrapperType::CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) {
-        if(anotherType->IsWrapperType()) {
+        if (anotherType->IsWrapperType()) {
             anotherType = UniquePtrCast<WrapperType>(anotherType)->DeWrap();
         }
-        TypeBase* result = new RValueType(targetType->CalcType(std::move(anotherType), op, ok, errMsg));
+        TypeBase *result = new RValueType(targetType->CalcType(std::move(anotherType), op, ok, errMsg));
         return std::unique_ptr<TypeBase>(result);
     }
 
     std::unique_ptr<TypeBase>
     WrapperType::CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &errMsg) {
-        TypeBase* result = new RValueType(targetType->CalcFuncType(std::move(argTypes), ok, errMsg));
+        TypeBase *result = new RValueType(targetType->CalcFuncType(std::move(argTypes), ok, errMsg));
         return std::unique_ptr<TypeBase>(result);
     }
 
     std::unique_ptr<TypeBase>
     WrapperType::CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &errMsg) {
-        TypeBase* result = new RValueType(targetType->CalcArrayType(std::move(elemTypes), ok, errMsg));
+        TypeBase *result = new RValueType(targetType->CalcArrayType(std::move(elemTypes), ok, errMsg));
         return std::unique_ptr<TypeBase>(result);
     }
 
@@ -61,8 +62,86 @@ namespace AST {
     }
 
     std::unique_ptr<TypeBase> LValueType::Copy() {
-        TypeBase* result = new LValueType(targetType->Copy());
+        TypeBase *result = new LValueType(targetType->Copy());
         return std::unique_ptr<TypeBase>(result);
+    }
+
+    bool LValueType::InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        if (!AssignCompatible(std::move(anotherType), errMsg)) {
+            errMsg = std::string("type ") + ToString() + " cannot be initialized by type " + anotherType->ToString();
+            return false;
+        }
+        return true;
+    }
+
+    bool LValueType::AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        bool compatible;
+
+        if (anotherType->IsWrapperType()) {
+            auto another(UniquePtrCast<WrapperType>(anotherType)->DeWrap());
+            compatible = targetType->AssignCompatible(std::move(another), errMsg);
+        } else {
+            compatible = targetType->AssignCompatible(std::move(anotherType), errMsg);
+        }
+        if (!compatible)
+            errMsg = std::string("type ") + ToString() + " cannot be assigned by type " + anotherType->ToString();
+        return compatible;
+    }
+
+    std::unique_ptr<TypeBase> RValueType::Copy() {
+        TypeBase *result = new RValueType(targetType->Copy());
+        return std::unique_ptr<TypeBase>(result);
+    }
+
+    std::string RValueType::ToString() {
+        return "RVal(" + targetType->ToString() + ")";
+    }
+
+    bool RValueType::InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        errMsg = std::string("type ") + ToString() + " cannot be initialized by type " + anotherType->ToString();
+        return false;
+    }
+
+    bool RValueType::AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        errMsg = std::string("type ") + ToString() + " cannot be assigned by type " + anotherType->ToString();
+        return false;
+    }
+
+    std::unique_ptr<TypeBase> RefType::Copy() {
+        TypeBase *result = new RefType(targetType->Copy());
+        return std::unique_ptr<TypeBase>(result);
+    }
+
+    std::string RefType::ToString() {
+        return "Ref(" + targetType->ToString() + ")";
+    }
+
+    bool RefType::InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        bool compatible;
+
+        if (anotherType->GetTypeId() == REF || anotherType->GetTypeId() == LVALUE) {
+            auto another(UniquePtrCast<WrapperType>(anotherType)->DeWrap());
+            compatible = targetType->InitCompatible(std::move(another), errMsg);
+        } else {
+            compatible = false;
+        }
+        if (!compatible)
+            errMsg = "type " + ToString() + " cannot be initialized by type " + anotherType->ToString();
+        return compatible;
+    }
+
+    bool RefType::AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        bool compatiable;
+
+        if (anotherType->IsWrapperType()) {
+            auto ano(UniquePtrCast<WrapperType>(anotherType)->DeWrap());
+            compatiable = targetType->AssignCompatible(std::move(ano), errMsg);
+        } else {
+            compatiable = targetType->AssignCompatible(std::move(anotherType), errMsg);
+        }
+        if (!compatiable)
+            errMsg = "type " + ToString() + " cannot be assigned by type " + anotherType->ToString();
+        return compatiable;
     }
 
     std::string VOIDType::ToString() {
