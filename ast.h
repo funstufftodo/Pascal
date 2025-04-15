@@ -8,7 +8,7 @@
 #include "types.h"
 #include "symboltable.h"
 
-namespace PascalAST {
+namespace AST {
     struct ASTNode {
         virtual std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) = 0;
 
