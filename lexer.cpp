@@ -194,29 +194,6 @@ namespace CompilerFront {
         return Token("id", identifier, line, startColumn);
     }
 
-    Token Lexer::scanChar() {
-        int startColumn = column;
-        pos++;
-        column++;
-
-        if (pos < contentLength && content[pos] != '\'') {
-            char charValue = content[pos++];
-            column++;
-
-            if (pos < contentLength && content[pos] == '\'') {
-                pos++;
-                column++;
-                return Token("char", std::string(1, charValue), line, startColumn + 1);
-            } else {
-                reportError("Unterminated character constant");
-                return Token("error", std::string(1, charValue), line, startColumn + 1);
-            }
-        } else {
-            reportError("Empty character constant");
-            return Token("error", "", line, startColumn);
-        }
-    }
-
     Token Lexer::scanColon() {
         int startColumn = column;
         pos++;

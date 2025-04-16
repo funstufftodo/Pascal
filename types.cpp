@@ -76,7 +76,7 @@ namespace AbstractSyntaxTree {
 
     bool LValueType::AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
         bool compatible;
-
+        std::string str = anotherType->ToString();
         if (anotherType->IsWrapperType()) {
             auto another(UniquePtrCast<WrapperType>(anotherType)->DeWrap());
             compatible = targetType->AssignCompatible(std::move(another), errMsg);
@@ -84,7 +84,7 @@ namespace AbstractSyntaxTree {
             compatible = targetType->AssignCompatible(std::move(anotherType), errMsg);
         }
         if (!compatible)
-            errMsg = std::string("type ") + ToString() + " cannot be assigned by type " + anotherType->ToString();
+            errMsg = std::string("type ") + ToString() + " cannot be assigned by type " + str;
         return compatible;
     }
 
@@ -118,7 +118,7 @@ namespace AbstractSyntaxTree {
 
     bool RefType::InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
         bool compatible;
-
+        std::string str = anotherType->ToString();
         if (anotherType->GetTypeId() == REF || anotherType->GetTypeId() == LVALUE) {
             auto another(UniquePtrCast<WrapperType>(anotherType)->DeWrap());
             compatible = targetType->InitCompatible(std::move(another), errMsg);
@@ -126,13 +126,13 @@ namespace AbstractSyntaxTree {
             compatible = false;
         }
         if (!compatible)
-            errMsg = "type " + ToString() + " cannot be initialized by type " + anotherType->ToString();
+            errMsg = "type " + ToString() + " cannot be initialized by type " + str;
         return compatible;
     }
 
     bool RefType::AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
         bool compatiable;
-
+        std::string str = anotherType->ToString();
         if (anotherType->IsWrapperType()) {
             auto ano(UniquePtrCast<WrapperType>(anotherType)->DeWrap());
             compatiable = targetType->AssignCompatible(std::move(ano), errMsg);
@@ -140,7 +140,7 @@ namespace AbstractSyntaxTree {
             compatiable = targetType->AssignCompatible(std::move(anotherType), errMsg);
         }
         if (!compatiable)
-            errMsg = "type " + ToString() + " cannot be assigned by type " + anotherType->ToString();
+            errMsg = "type " + ToString() + " cannot be assigned by type " + str;
         return compatiable;
     }
 
@@ -255,6 +255,10 @@ namespace AbstractSyntaxTree {
 
     bool IntegerType::AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
         if (anotherType->IsBasicType()) {
+            if(anotherType->GetTypeId() == REAL) {
+                errMsg = "Type " + ToString() + "cannot be assigned by " + anotherType->ToString();
+                return false;
+            }
             return true;
         }
         errMsg = "Type " + ToString() + "cannot be assigned by " + anotherType->ToString();

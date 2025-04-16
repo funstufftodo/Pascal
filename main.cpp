@@ -10,17 +10,13 @@ void EnableConsoleColors() {
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     SetConsoleMode(hOut, dwMode);
 }
+SetConsoleOutputCP(CP_UTF8);
+EnableConsoleColors();
 #endif
 
 using namespace Utils;
 
 int main() {
-
-    #ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-    EnableConsoleColors();
-    #endif
-
     AddConstantSymbols();
     LoadSymbols("../utils/grammar.txt");
     ElimLeftRecur();
@@ -40,8 +36,7 @@ int main() {
             "./sync.txt",
             "programstruct");
     std::cout << "---------------------------" << std::endl;
-    std::cout << "PARSE ST" << std::endl;
-
+    std::cout << "PARSE START" << std::endl;
     bool ok;
     AbstractSyntaxTree::AbstractSyntaxTree ast(parser.Parse(ok));
     if (!ok)

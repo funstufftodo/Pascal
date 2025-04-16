@@ -82,8 +82,6 @@ namespace CompilerFront {
 
         Token scanIdentifier();
 
-        Token scanChar();
-
         Token scanColon();
 
         Token scanLess();

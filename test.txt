@@ -7,7 +7,7 @@ const
 var
     x, y, i: integer;
     message: integer;
-    data: array[2..5, 1..10] of real;
+    data: array[1..5, 1..10] of real;
 
 function max(a, b: integer): integer;
 var

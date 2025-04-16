@@ -108,7 +108,7 @@ namespace AbstractSyntaxTree {
         }
 
         std::unique_ptr<TypeBase> DeWrap() {
-            std::cout << "DEWRAP " << targetType->GetTypeId() << std::endl;
+            //std::cout << "DEWRAP " << targetType->GetTypeId() << std::endl;
             return targetType->Copy();
         }
 
@@ -264,9 +264,9 @@ namespace AbstractSyntaxTree {
             }
         }
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
         bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
