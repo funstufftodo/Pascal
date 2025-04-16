@@ -55,6 +55,15 @@ namespace CompilerFront {
 
         char curChar = content[pos];
 
+        if (charST) {
+            pos++;
+            if (curChar == '\'') {
+                charST = false;
+                return Token(std::string(1, curChar), std::string(1, curChar), line, column++);
+            }
+            return Token("letter", std::string(1, curChar), line, column++);
+        }
+
         if (isDigit(curChar)) {
             return scanNumber();
         }
@@ -65,7 +74,9 @@ namespace CompilerFront {
 
         switch (curChar) {
             case '\'':
-                return scanChar();
+                pos++;
+                charST = true;
+                return Token(std::string(1, curChar), std::string(1, curChar), line, column++);
             case '+':
                 pos++;
                 return Token("+", "+", line, column++);
@@ -121,16 +132,13 @@ namespace CompilerFront {
             if (c == ' ' || c == '\t' || c == '\r') {
                 pos++;
                 column++;
-            }
-            else if (c == '\n') {
+            } else if (c == '\n') {
                 pos++;
                 line++;
                 column = 1;
-            }
-            else if (c == '{') {
+            } else if (c == '{') {
                 skipComment();
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -200,13 +208,11 @@ namespace CompilerFront {
                 pos++;
                 column++;
                 return Token("char", std::string(1, charValue), line, startColumn + 1);
-            }
-            else {
+            } else {
                 reportError("Unterminated character constant");
                 return Token("error", std::string(1, charValue), line, startColumn + 1);
             }
-        }
-        else {
+        } else {
             reportError("Empty character constant");
             return Token("error", "", line, startColumn);
         }
@@ -236,8 +242,7 @@ namespace CompilerFront {
                 pos++;
                 column++;
                 return Token("relop", "<=", line, startColumn);
-            }
-            else if (content[pos] == '>') {
+            } else if (content[pos] == '>') {
                 pos++;
                 column++;
                 return Token("relop", "<>", line, startColumn);
@@ -283,8 +288,7 @@ namespace CompilerFront {
             if (content[pos] == '\n') {
                 line++;
                 column = 1;
-            }
-            else {
+            } else {
                 column++;
             }
             pos++;
@@ -297,7 +301,7 @@ namespace CompilerFront {
     }
 
 
-    void Lexer::reportError(const std::string& message) {
+    void Lexer::reportError(const std::string &message) {
         std::cerr << "Error at line " << line << ", column " << column << ": " << message << std::endl;
     }
 

@@ -7,8 +7,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace CompilerFront
-{
+namespace CompilerFront {
     /**
      * @brief 表示词法分析器生成的一个标记（token）。
      * tpye为标记的类型，lexeme为标记的内容，line和column为标记在源代码中的位置。
@@ -21,6 +20,7 @@ namespace CompilerFront
         int column;
 
         Token() : type("error"), lexeme(""), line(0), column(0) {}
+
         /**
          * @brief 带参数的构造函数，用于初始化标记。
          * @param t 标记的类型
@@ -31,6 +31,7 @@ namespace CompilerFront
         Token(std::string t, std::string l, int ln, int col)
                 : type(t), lexeme(std::move(l)), line(ln), column(col) {}
     };
+
     /**
      * @class Lexer
      * @brief 词法分析器类，用于将输入的源代码转换为标记。
@@ -67,19 +68,28 @@ namespace CompilerFront
         int line;
         int column;
         int contentLength;
+        bool charST = false;
         std::string path;
         std::string content;
 
         void skipWhitespace();
+
         void skipComment();
-        void reportError(const std::string& message);
+
+        void reportError(const std::string &message);
 
         Token scanNumber();
+
         Token scanIdentifier();
+
         Token scanChar();
+
         Token scanColon();
+
         Token scanLess();
+
         Token scanGreater();
+
         Token scanPeriod();
 
     };

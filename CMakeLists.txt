@@ -14,4 +14,9 @@ add_executable(compiler main.cpp
         symboltable.h
         ast.h
         ast.cpp
+        syntaxcheck.cpp
+        parser.h
+        parser.cpp
+        show.cpp
+        genc.cpp
 )

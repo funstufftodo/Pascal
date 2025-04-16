@@ -6,7 +6,7 @@
 #include <vector>
 #include <functional>
 
-namespace AST {
+namespace AbstractSyntaxTree {
     template<typename To, typename From>
     std::unique_ptr<To> UniquePtrCast(std::unique_ptr<From> &&ptr) {
         if (auto p = dynamic_cast<To *>(ptr.get())) {
@@ -60,9 +60,9 @@ namespace AST {
 
         virtual std::string ToString() = 0;
 
-        TypeBase() {}
+        TypeBase() = default;
 
-        TypeBase(TypeID id) : id(id) {}
+        explicit TypeBase(TypeID id) : id(id) {}
 
         TypeID GetTypeId() {
             return id;
@@ -90,7 +90,7 @@ namespace AST {
         }
 
     private:
-        TypeID id;
+        TypeID id = VOID;
     };
 
     class WrapperType : public TypeBase {
@@ -110,13 +110,13 @@ namespace AST {
         }
 
         virtual std::unique_ptr<TypeBase>
-        CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg);
+        CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) override;
 
         virtual std::unique_ptr<TypeBase>
-        CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &errMsg);
+        CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &errMsg) override;
 
         virtual std::unique_ptr<TypeBase>
-        CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &errMsg);
+        CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &errMsg) override;
 
     protected:
         std::unique_ptr<TypeBase> targetType;
@@ -129,13 +129,13 @@ namespace AST {
         LValueType(std::unique_ptr<TypeBase> &&targetType) : WrapperType(std::move(targetType), LVALUE) {
         }
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class RValueType : public WrapperType {
@@ -145,13 +145,13 @@ namespace AST {
         RValueType(std::unique_ptr<TypeBase> &&targetType) : WrapperType(std::move(targetType), RVALUE) {
         }
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class RefType : public WrapperType {
@@ -161,24 +161,24 @@ namespace AST {
         RefType(std::unique_ptr<TypeBase> &&targetType) : WrapperType(std::move(targetType), REF) {
         }
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class VOIDType : public TypeBase {
     public:
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class BooleanType : public TypeBase {
@@ -186,15 +186,15 @@ namespace AST {
         virtual std::unique_ptr<TypeBase>
         CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) override;
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString()  override;
 
         BooleanType() : TypeBase(BOOLEAN) {}
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class IntegerType : public TypeBase {
@@ -202,47 +202,47 @@ namespace AST {
         virtual std::unique_ptr<TypeBase>
         CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) override;
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
         IntegerType() : TypeBase(INTEGER) {}
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class RealType : public TypeBase {
     public:
-        virtual std::unique_ptr<TypeBase>
+        std::unique_ptr<TypeBase>
         CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) override;
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
         RealType() : TypeBase(REAL) {}
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class CharType : public TypeBase {
     public:
-        virtual std::unique_ptr<TypeBase>
+        std::unique_ptr<TypeBase>
         CalcType(std::unique_ptr<TypeBase> &&anotherType, std::string op, bool &ok, std::string &errMsg) override;
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
         CharType() : TypeBase(CHAR) {}
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
     };
 
     class TupleType : public TypeBase {
@@ -250,14 +250,14 @@ namespace AST {
         TupleType() : TypeBase(TUPLE) {}
 
         TupleType(std::vector<std::unique_ptr<TypeBase>> &types) : TypeBase(TUPLE) {
-            for (int i = 0; i < types.size(); i++) {
-                subTypes.push_back(types[i]->Copy());
+            for (const auto & type : types) {
+                subTypes.push_back(type->Copy());
             }
         }
 
         TupleType(std::vector<std::unique_ptr<TypeBase>> &&types) : TypeBase(TUPLE) {
-            for (int i = 0; i < types.size(); i++) {
-                subTypes.push_back(std::move(types[i]));
+            for (auto & type : types) {
+                subTypes.push_back(std::move(type));
             }
         }
 
@@ -265,9 +265,9 @@ namespace AST {
 
         std::string ToString();
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
         std::vector<std::unique_ptr<TypeBase>> GetSubTypes() {
             std::vector<std::unique_ptr<TypeBase>> result;
@@ -282,21 +282,21 @@ namespace AST {
 
     class FuncType : public TypeBase {
     public:
-        virtual std::unique_ptr<TypeBase>
+        std::unique_ptr<TypeBase>
         CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &errMsg) override;
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
         FuncType() : TypeBase(FUNC) {}
 
         FuncType(std::unique_ptr<TupleType> &&argTypes, std::unique_ptr<TypeBase> &&retType)
                 : argTypes(std::move(argTypes)), retType(std::move(retType)), TypeBase(FUNC) {}
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
         std::vector<std::unique_ptr<TypeBase>> GetArgTypes() {
             return argTypes->GetSubTypes();
@@ -314,27 +314,31 @@ namespace AST {
 
     class ArrayType : public TypeBase {
     public:
-        virtual std::unique_ptr<TypeBase>
+        std::unique_ptr<TypeBase>
         CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &errMsg) override;
 
-        std::unique_ptr<TypeBase> Copy();
+        std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString();
+        std::string ToString() override;
 
         ArrayType() : TypeBase(ARRAY) {}
 
         ArrayType(std::vector<std::pair<int, int>> &dimensions, std::unique_ptr<TypeBase> &&contentType)
                 : dimensions(dimensions), contentType(std::move(contentType)), TypeBase(ARRAY) {}
 
-        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
-        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg);
+        bool AssignCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) override;
 
         std::vector<int> GetOffset() {
             std::vector<int> result;
             for (auto &dim: dimensions)
                 result.push_back(dim.first);
             return result;
+        }
+
+        int GetContentType() {
+            return contentType->GetTypeId();
         }
 
     private:

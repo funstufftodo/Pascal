@@ -1,7 +1,7 @@
 #include "types.h"
 #include <iostream>
 
-namespace AST {
+namespace AbstractSyntaxTree {
     inline bool isRelop(const std::string &op) {
         if (op == "=" || op == "<" || op == ">" || op == "<=" || op == ">=" || op == "<>")
             return true;
@@ -53,7 +53,7 @@ namespace AST {
 
     std::unique_ptr<TypeBase>
     WrapperType::CalcArrayType(std::unique_ptr<TupleType> &&elemTypes, bool &ok, std::string &errMsg) {
-        TypeBase *result = new RValueType(targetType->CalcArrayType(std::move(elemTypes), ok, errMsg));
+        TypeBase *result = new LValueType(targetType->CalcArrayType(std::move(elemTypes), ok, errMsg));
         return std::unique_ptr<TypeBase>(result);
     }
 

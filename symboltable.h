@@ -6,7 +6,7 @@
 #include <memory>
 #include "ast.h"
 
-namespace AST {
+namespace AbstractSyntaxTree {
     struct SymbolTableItem {
         std::unique_ptr<TypeBase> type;
         bool isConstant;
@@ -29,6 +29,7 @@ namespace AST {
         int curSubCnt;
 
         SymbolScope() : layer(0), curSubCnt(0) {}
+
 
         SymbolScope(std::shared_ptr<SymbolScope> &upperScope, int layer) : upperScope(upperScope), layer(layer),
                                                                            curSubCnt(0) {}
@@ -97,9 +98,47 @@ namespace AST {
             curScope->symbolMap[id] = SymbolTableItem(std::move(type), isConstant, oriVal);
         }
 
+        void Print(std::ostream& out = std::cout) const {
+            out << "===== Symbol Table =====\n";
+            PrintScope(rootScope, 0);
+            out << "=======================\n";
+        }
     private:
         std::shared_ptr<SymbolScope> rootScope;
         std::shared_ptr<SymbolScope> curScope;
+
+        void PrintScope(std::shared_ptr<SymbolScope> scope, int indent) const {
+            std::string indentStr(indent * 2, ' ');
+
+            std::cout << indentStr << "┌─ Scope (layer " << scope->layer << ")\n";
+
+            if (scope->symbolMap.empty()) {
+                std::cout << indentStr << "│  (no symbols)\n";
+            } else {
+                for (const auto& [name, item] : scope->symbolMap) {
+                    std::cout << indentStr << "├─ " << name << ": "
+                              << (item.isConstant ? "[const] " : "[var]   ")
+                              << (item.type ? item.type->ToString() : "[null type]");
+
+                    if (!item.oriVal.empty()) {
+                        std::cout << " (value: " << item.oriVal << ")";
+                    }
+                    std::cout << "\n";
+                }
+            }
+
+            std::cout << indentStr << "│\n";
+            for (size_t i = 0; i < scope->subScope.size(); ++i) {
+                const bool last = (i == scope->subScope.size() - 1);
+                std::cout << indentStr << (last ? "└─▶ " : "├─▶ ");
+                PrintScope(scope->subScope[i], indent + (last ? 1 : 2));
+            }
+
+            if (scope->subScope.empty()) {
+                std::cout << indentStr << "└─ (no subscopes)\n";
+            }
+        }
+
     };
 }
 
