@@ -62,6 +62,8 @@ namespace AbstractSyntaxTree {
 
         TypeBase() = default;
 
+        virtual ~TypeBase() = default;
+
         explicit TypeBase(TypeID id) : id(id) {}
 
         TypeID GetTypeId() {
@@ -96,6 +98,7 @@ namespace AbstractSyntaxTree {
     class WrapperType : public TypeBase {
     public:
         WrapperType() : TypeBase(VOID) {}
+        virtual ~WrapperType() = default;
 
         WrapperType(TypeID id) : TypeBase(id) {}
 

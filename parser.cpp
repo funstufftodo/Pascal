@@ -1,4 +1,4 @@
-#include "Parser.h"
+#include "parser.h"
 
 namespace CompilerFront {
     std::unique_ptr<AbstractSyntaxTree::ASTNode> Parser::Parse(bool &ok) {

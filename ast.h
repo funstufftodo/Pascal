@@ -11,6 +11,8 @@
 
 namespace AbstractSyntaxTree {
     struct ASTNode {
+        virtual ~ASTNode() = default;
+
         virtual std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) = 0;
 
         virtual void Show() = 0;
@@ -62,7 +64,8 @@ namespace AbstractSyntaxTree {
 
         OriASTNode() = default;
 
-        OriASTNode(std::string content, std::string info, int line, int column) : content(std::move(content)), info(std::move(info)),
+        OriASTNode(std::string content, std::string info, int line, int column) : content(std::move(content)),
+                                                                                  info(std::move(info)),
                                                                                   Line(line), Column(column) {}
 
         std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
@@ -239,7 +242,8 @@ namespace AbstractSyntaxTree {
                             std::string content,
                             int Line,
                             int Column)
-                : name(std::move(name)), type(std::move(type)), content(std::move(content)), Line(Line), Column(Column) {}
+                : name(std::move(name)), type(std::move(type)), content(std::move(content)), Line(Line),
+                  Column(Column) {}
 
         std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
 
@@ -446,7 +450,6 @@ namespace AbstractSyntaxTree {
     };
 
 
-
     struct VarPart;
 
     struct Variable : public ASTNode {
@@ -595,7 +598,7 @@ namespace AbstractSyntaxTree {
                   std::unique_ptr<MulOpPart> &&followPart,
                   int Line,
                   int Column) : mulOp(std::move(mulOp)), secondFactor(std::move(secondFactor)),
-                                  followPart(std::move(followPart)), Line(Line), Column(Column) {}
+                                followPart(std::move(followPart)), Line(Line), Column(Column) {}
 
         std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
 
@@ -640,8 +643,9 @@ namespace AbstractSyntaxTree {
                   std::unique_ptr<Term> &&secondTerm,
                   std::unique_ptr<AddOpPart> &&followPart,
                   int Line,
-                  int Column) : addOp(std::move(addOp)), secondTerm(std::move(secondTerm)), followPart(std::move(followPart)),
-                                  Line(Line), Column(Column) {}
+                  int Column) : addOp(std::move(addOp)), secondTerm(std::move(secondTerm)),
+                                followPart(std::move(followPart)),
+                                Line(Line), Column(Column) {}
 
         std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
 
@@ -799,7 +803,7 @@ namespace AbstractSyntaxTree {
         explicit SubCompoundStatement(std::unique_ptr<CompoundStatement> &&compoundStatement) : compoundStatement(
                 std::move(compoundStatement)) {}
 
-        std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok)override;
+        std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
 
         void Show() override;
 
@@ -846,11 +850,11 @@ namespace AbstractSyntaxTree {
                          std::unique_ptr<Statement> &&loopStatement,
                          int Line,
                          int Column) : counter(std::move(counter)),
-                                         initExpression(std::move(initExpression)),
-                                         termiExpression(std::move(termiExpression)),
-                                         loopStatement(std::move(loopStatement)),
-                                         Line(Line),
-                                         Column(Column) {}
+                                       initExpression(std::move(initExpression)),
+                                       termiExpression(std::move(termiExpression)),
+                                       loopStatement(std::move(loopStatement)),
+                                       Line(Line),
+                                       Column(Column) {}
 
         std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
 

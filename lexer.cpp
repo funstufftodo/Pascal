@@ -1,5 +1,4 @@
-#include "Lexer.h"
-#include <stdexcept>
+#include "lexer.h"
 #include <set>
 
 namespace CompilerFront {
