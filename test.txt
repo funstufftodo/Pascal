@@ -1,45 +1,11 @@
-program ExampleProgram(a, b, c);
-
-const
-    pi = 3.14;
-    newline = 'n';
-
-var
-    x, y, i: integer;
-    message: integer;
-    data: array[2..5, 1..10] of real;
-
-function max(a, b: integer): integer;
-var
-    result: integer;
-begin
-    if a > b then
-        result := a
-    else
-        result := b;
-end;
-
-procedure printResult(value: integer);
-begin
-    write(value);
-end;
-
-begin
-    x := 10;
-    y := 20;
-    message := 1;
-
-    if x < y then
-    begin
-        x := max(x, y);
-        printResult(x);
-    end
-    else
-    begin
-        for i := 1 to 5 do
-        begin
-            read(data[i, i]);
-            write(data[i, i]);
-        end;
-    end;
-end.
+program example(input, output);
+ var x, y: integer;
+ function gcd(a, b: integer): integer;
+ begin
+if b=0 then gcd:=a
+ else gcd:=gcd(b, a mod b)
+ end;
+ begin
+ read(x, y);
+ write(gcd(x, y))
+ end.

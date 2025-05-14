@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "./utils/utils.h"
 #include "parser.h"
 #ifdef _WIN32
@@ -14,12 +16,34 @@ void EnableConsoleColors() {
 
 using namespace Utils;
 
-int main() {
+std::string GetOutputFilename(const std::string& inputPath) {
+    size_t lastDot = inputPath.find_last_of(".");
+    if (lastDot != std::string::npos) {
+        return inputPath.substr(0, lastDot) + ".c";
+    }
+    return inputPath + ".c";
+}
 
-    #ifdef _WIN32
+int main(int argc, char* argv[]) {
+    std::string inputPath = "../test.txt";  // 默认值
+    std::string outputPath;
+
+    // 解析命令行参数
+    for (int i = 1; i < argc; ++i) {
+        if (std::string(argv[i]) == "-i" && i+1 < argc) {
+            inputPath = argv[++i];
+            outputPath = GetOutputFilename(inputPath);
+        }
+    }
+
+    if (outputPath.empty()) {
+        outputPath = GetOutputFilename(inputPath);
+    }
+
+#ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
     EnableConsoleColors();
-    #endif
+#endif
 
     AddConstantSymbols();
     LoadSymbols("../utils/grammar.txt");
@@ -34,11 +58,12 @@ int main() {
     SaveLL1Table("../utils/ll1_table", "../utils/sync.txt");
 
     CompilerFront::Parser parser(
-            "../test.txt",
+            inputPath.c_str(),    // 使用命令行输入的路径
             "./reduced.txt",
             "./ll1_table.txt",
             "./sync.txt",
             "programstruct");
+
     std::cout << "---------------------------" << std::endl;
     std::cout << "PARSE ST" << std::endl;
 
@@ -50,8 +75,15 @@ int main() {
     std::cout << "PARSE OVER" << std::endl;
     bool result = ast.Check();
     ast.symTable.Print();
+
     if (result) {
-        std::cout << ast.GenCCode();
+        std::ofstream outFile(outputPath);
+        if (outFile.is_open()) {
+            outFile << ast.GenCCode();
+            std::cout << "Output generated to: " << outputPath << std::endl;
+        } else {
+            std::cerr << "Failed to create output file: " << outputPath << std::endl;
+        }
     }
     return 0;
 }
