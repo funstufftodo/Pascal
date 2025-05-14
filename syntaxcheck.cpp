@@ -409,6 +409,8 @@ namespace AbstractSyntaxTree {
             TypeID tp = UniquePtrCast<WrapperType>(type->Copy())->DeWrap()->GetTypeId();
             switch (tp) {
                 case BOOLEAN:
+                    typeStr += "\%d";
+                    break;
                 case INTEGER:
                     typeStr += "\%d";
                     break;
@@ -418,6 +420,8 @@ namespace AbstractSyntaxTree {
                 case CHAR:
                     typeStr += "\%c";
                     break;
+                default:
+                    typeStr += "";
             }
         }
         typeStr += "\"";
