@@ -46,7 +46,9 @@ namespace CompilerFront {
 
     Token Lexer::getToken() {
 
-        skipWhitespace();
+        if(!charST) {
+            skipWhitespace();
+        }
 
         if (pos >= contentLength) {
             return Token("$", "$", line, column);
@@ -128,6 +130,7 @@ namespace CompilerFront {
     void Lexer::skipWhitespace() {
         while (pos < contentLength) {
             char c = content[pos];
+
             if (c == ' ' || c == '\t' || c == '\r') {
                 pos++;
                 column++;
@@ -137,11 +140,26 @@ namespace CompilerFront {
                 column = 1;
             } else if (c == '{') {
                 skipComment();
+            } else if (c == '/' && pos + 1 < contentLength && content[pos + 1] == '/') {
+                // 处理单行注释
+                pos += 2;
+                column += 2;
+                while (pos < contentLength && content[pos] != '\n') {
+                    pos++;
+                    column++;
+                }
+                // 换行符也要跳过
+                if (pos < contentLength && content[pos] == '\n') {
+                    pos++;
+                    line++;
+                    column = 1;
+                }
             } else {
                 break;
             }
         }
     }
+
 
     Token Lexer::scanNumber() {
         std::string num;

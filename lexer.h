@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <regex>
 
 namespace CompilerFront {
     /**
@@ -54,7 +55,12 @@ namespace CompilerFront {
             contentLength = content.length();
 
             //pascal语言大小写不敏感，故将所有读入字符转换为小写
-            std::transform(content.begin(), content.end(), content.begin(), ::tolower);
+            //std::transform(content.begin(), content.end(), content.begin(), ::tolower);
+            std::regex trueRegex(R"(\btrue\b)");
+            std::regex falseRegex(R"(\bfalse\b)");
+            content = std::regex_replace(content, trueRegex, "1");
+            content = std::regex_replace(content, falseRegex, "0");
+
         }
 
         /**

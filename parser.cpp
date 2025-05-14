@@ -106,7 +106,16 @@ namespace CompilerFront {
         symbolStack.pop();
         Utils::LL1Item& item = itemIt->second;
         Utils::Expression expression;
-        std::string topSymbolName = Utils::InvSymbolNameMap.find(topSymbolId)->second;
+        std::string topSymbolName;
+        auto topSymbolIt = Utils::InvSymbolNameMap.find(topSymbolId);
+        if (topSymbolIt != Utils::InvSymbolNameMap.end()) {
+            topSymbolName = topSymbolIt->second;
+        } else {
+            // 严重错误：topSymbolId 不在 InvSymbolNameMap 中
+            std::cerr << "Error: topSymbolId " << topSymbolId << " not found in InvSymbolNameMap." << std::endl;
+            ok = false;
+            return; // 或者抛出异常
+        }
 
         if (item.size() > 1) {
             if (handleConstDeclaration(topSymbolName, topSymbol, nxtToken, expression, item)) {}
@@ -132,17 +141,26 @@ namespace CompilerFront {
         }
 
         if (ok) {
+            std::string exprFirstName;
+            auto exprFirstIt = Utils::InvSymbolNameMap.find(expression[0]);
+            if (exprFirstIt != Utils::InvSymbolNameMap.end()) {
+                exprFirstName = exprFirstIt->second;
+            } else {
+                std::cerr << "Error: expression[0] (" << expression[0] << ") not found in InvSymbolNameMap." << std::endl;
+                ok = false;
+                // 不直接返回，因为可能还需要清理栈，但 ReduceInfo 不应该被推入
+            }
             if (allEps) {
                 std::vector<std::unique_ptr<AbstractSyntaxTree::ASTNode>> empty;
                 astStack.push_back(AbstractSyntaxTree::GenAstNode(
                         topSymbolName,
-                        Utils::InvSymbolNameMap.find(expression[0])->second, empty));
+                        exprFirstName, empty));
             } else {
                 reduceStack.push(ReduceInfo(
                         reduceStackSize,
                         reduceCnt,
                         topSymbolName,
-                        Utils::InvSymbolNameMap.find(expression[0])->second));
+                        exprFirstName));
             }
         }
     }

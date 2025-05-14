@@ -68,10 +68,14 @@ formal_parameter
 ( (
 : EPS
 parameter_list
+; parameter
 id parameter
+) parameter
 var parameter
 parameter
+; EPS
 id value_parameter
+) EPS
 var var_parameter
 var_parameter
 var var
@@ -99,10 +103,20 @@ else EPS
 variable
 id id
 expression
+; EPS
 id simple_expression
 ( simple_expression
+) EPS
+, EPS
++ simple_expression
 - simple_expression
+] EPS
 digits simple_expression
+end EPS
+then EPS
+to EPS
+do EPS
+else EPS
 not simple_expression
 float simple_expression
 else_part
@@ -114,7 +128,11 @@ id variable
 expression_list
 id expression
 ( expression
+) expression
+, expression
++ expression
 - expression
+] expression
 digits expression
 not expression
 float expression
@@ -140,6 +158,7 @@ mulop EPS
 simple_expression
 id term
 ( term
++ term
 - term
 digits term
 not term
@@ -147,6 +166,7 @@ float term
 term
 id factor
 ( factor
++ factor
 - factor
 digits factor
 not factor
@@ -154,6 +174,7 @@ float factor
 factor
 id variable
 ( (
++ +
 - -
 digits num
 not not

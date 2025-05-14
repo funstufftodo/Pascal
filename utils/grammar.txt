@@ -35,6 +35,9 @@ parameter_list parameter_list ; parameter
 parameter_list parameter
 parameter var_parameter
 parameter value_parameter
+
+parameter EPS
+
 var_parameter var value_parameter
 value_parameter idlist : basic_type
 subprogram_body const_declarations var_declarations compound_statement
@@ -62,6 +65,7 @@ expression_list expression
 expression simple_expression relop simple_expression
 expression simple_expression = simple_expression
 expression simple_expression
+expression EPS
 simple_expression simple_expression + term
 simple_expression simple_expression - term
 simple_expression simple_expression or term
@@ -73,5 +77,6 @@ factor variable
 factor ( expression )
 factor not factor
 factor - factor
+factor + factor
 num digits
 num float

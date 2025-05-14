@@ -547,6 +547,21 @@ namespace AbstractSyntaxTree {
         std::string GenCCode(SymbolTable &table, bool isRef) override;
     };
 
+    struct PosFactor : public Factor {
+        std::unique_ptr<Factor> subFactor;
+        int Line = 0;
+        int Column = 0;
+
+        PosFactor() = default;
+
+        PosFactor(std::unique_ptr<Factor> &&subFactor, int Line, int Column)
+                : subFactor(std::move(subFactor)), Line(Line), Column(Column) {}
+
+        std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
+
+        std::string GenCCode(SymbolTable &table, bool isRef) override;
+    };
+
     struct VariableFactor : public Factor {
         std::unique_ptr<Variable> variable;
 

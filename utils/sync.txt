@@ -37,9 +37,9 @@ subprogram_body
 formal_parameter
 const var array procedure function begin if for read write $ 
 parameter_list
-) const array procedure function begin if for read write $ 
+const array procedure function begin if for read write $ 
 parameter
-; ) const array procedure function begin if for read write $ 
+const array procedure function begin if for read write $ 
 var_parameter
 ; ) const array procedure function begin if for read write $ 
 value_parameter
@@ -51,21 +51,21 @@ const var array procedure function $
 variable
 ; ) , const = + - var array ] procedure function begin end assignop if then for to do read write else relop or mulop $ 
 expression
-; ) , const var array ] procedure function begin end if then for to do read write else $ 
+const var array procedure function begin if for read write $ 
 else_part
 const var array procedure function begin if for read write $ 
 variable_list
 ) const var array procedure function begin if for read write $ 
 expression_list
-) const var array ] procedure function begin if for read write $ 
+const var array procedure function begin if for read write $ 
 id_varpart
 const var array procedure function begin if for read write $ 
 simple_expression
 ; ) , const = var array ] procedure function begin end if then for to do read write else relop $ 
 term
-; ) , const = + var array ] procedure function begin end if then for to do read write else relop or $ 
+; ) , const = var array ] procedure function begin end if then for to do read write else relop or $ 
 factor
-; ) , const = + var array ] procedure function begin end if then for to do read write else relop or mulop $ 
+; ) , const = var array ] procedure function begin end if then for to do read write else relop or mulop $ 
 idlist_78
 const var array procedure function begin if for read write $ 
 subprogram_declarations_79

@@ -49,12 +49,9 @@ int main(int argc, char* argv[]) {
     LoadSymbols("../utils/grammar.txt");
     ElimLeftRecur();
     CombineLeftCommon();
-    Show();
     GenFirst();
     GenFollow(SymbolNameMap.find("programstruct")->second);
-    ShowFollow();
     GenLL1();
-    ShowLL1Table();
     SaveLL1Table("../utils/ll1_table", "../utils/sync.txt");
 
     CompilerFront::Parser parser(
@@ -64,17 +61,14 @@ int main(int argc, char* argv[]) {
             "./sync.txt",
             "programstruct");
 
-    std::cout << "---------------------------" << std::endl;
-    std::cout << "PARSE ST" << std::endl;
 
     bool ok;
     AbstractSyntaxTree::AbstractSyntaxTree ast(parser.Parse(ok));
     if (!ok)
         return 0;
-    ast.astRoot->FormatShow(0);
-    std::cout << "PARSE OVER" << std::endl;
+    //ast.astRoot->FormatShow(0);
     bool result = ast.Check();
-    ast.symTable.Print();
+    //ast.symTable.Print();
 
     if (result) {
         std::ofstream outFile(outputPath);

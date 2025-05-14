@@ -12,7 +12,7 @@ namespace AbstractSyntaxTree {
 
     inline std::string ConvCAddop(std::string s) {
         if (s == "or")
-            return "|";
+            return "||";
         return s;
     }
 
@@ -20,7 +20,7 @@ namespace AbstractSyntaxTree {
         if (s == "div")
             return "/";
         if (s == "and")
-            return "&";
+            return "&&";
         if (s == "mod")
             return "%";
         return s;
@@ -121,8 +121,14 @@ namespace AbstractSyntaxTree {
     std::string ParameterList::GenCCode(SymbolTable &table, bool isRef) {
         //std::cout << "ParameterList" << std::endl;
         std::string ret;
-        for (auto &param: parameters)
-            ret += param->GenCCode(table, isRef);
+        if(parameters.empty() || parameters[0] == nullptr) {
+            ret += "";
+        } else {
+            for (auto &param: parameters)
+                ret += param->GenCCode(table, isRef);
+        }
+
+
         if (ret.size())
             ret.pop_back();
         //std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
@@ -226,6 +232,12 @@ namespace AbstractSyntaxTree {
         return ret + subFactor->GenCCode(table, false) + ")";
     }
 
+    std::string PosFactor::GenCCode(SymbolTable &table, bool isRef) {
+        //std::cout << "InvFactor" << std::endl;
+        std::string ret = "+(";
+        return ret + subFactor->GenCCode(table, false) + ")";
+    }
+
     std::string VariableFactor::GenCCode(SymbolTable &table, bool isRef) {
         //std::cout << "VariableFactor" << std::endl;
         return variable->GenCCode(table, isRef);
@@ -233,7 +245,7 @@ namespace AbstractSyntaxTree {
 
     std::string NotFactor::GenCCode(SymbolTable &table, bool isRef) {
         //std::cout << "NotFactor" << std::endl;
-        std::string ret = "!(";
+        std::string ret = "~(";
         return ret + subFactor->GenCCode(table, false) + ")";
     }
 

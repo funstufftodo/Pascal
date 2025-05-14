@@ -98,6 +98,7 @@ namespace AbstractSyntaxTree {
     class WrapperType : public TypeBase {
     public:
         WrapperType() : TypeBase(VOID) {}
+
         virtual ~WrapperType() = default;
 
         WrapperType(TypeID id) : TypeBase(id) {}
@@ -191,7 +192,7 @@ namespace AbstractSyntaxTree {
 
         std::unique_ptr<TypeBase> Copy() override;
 
-        std::string ToString()  override;
+        std::string ToString() override;
 
         BooleanType() : TypeBase(BOOLEAN) {}
 
@@ -253,13 +254,13 @@ namespace AbstractSyntaxTree {
         TupleType() : TypeBase(TUPLE) {}
 
         TupleType(std::vector<std::unique_ptr<TypeBase>> &types) : TypeBase(TUPLE) {
-            for (const auto & type : types) {
+            for (const auto &type: types) {
                 subTypes.push_back(type->Copy());
             }
         }
 
         TupleType(std::vector<std::unique_ptr<TypeBase>> &&types) : TypeBase(TUPLE) {
-            for (auto & type : types) {
+            for (auto &type: types) {
                 subTypes.push_back(std::move(type));
             }
         }
@@ -362,7 +363,7 @@ namespace AbstractSyntaxTree {
         return it != factoryMap.end() ? it->second() : std::make_unique<VOIDType>();
     }
 
-    inline std::unique_ptr<TypeBase> GenTypeByStr(const std::string& id) {
+    inline std::unique_ptr<TypeBase> GenTypeByStr(const std::string &id) {
         static const std::unordered_map<std::string, TypeID> typeMap = {
                 {"integer", TypeID::INTEGER},
                 {"int",     TypeID::INTEGER},

@@ -424,6 +424,9 @@ namespace AbstractSyntaxTree {
                 //parameter -> value_parameter
                 return std::move(subNodes[0]);
             }
+            if(expressionFirst == "EPS") {
+                return std::unique_ptr<ASTNode>();
+            }
         }
         if (expressionLeft == "parameter_list_83") {
             if (expressionFirst == "EPS") {
@@ -558,6 +561,10 @@ namespace AbstractSyntaxTree {
                         Unpack<SimpleExpression>(subNodes[0]),
                         Unpack<RelPart>(subNodes[1]));
                 return std::unique_ptr<ASTNode>(expression);
+            }
+
+            if(expressionFirst == "EPS") {
+                return std::unique_ptr<ASTNode>();
             }
         }
         if (expressionLeft == "else_part") {
@@ -741,6 +748,13 @@ namespace AbstractSyntaxTree {
                 ASTNode *invFactor = new InvFactor(
                         Unpack<Factor>(subNodes[1]), invSymbol->Line, invSymbol->Column);
                 return std::unique_ptr<ASTNode>(invFactor);
+            }
+            if (expressionFirst == "+") {
+                //factor -> + factor
+                auto invSymbol = Unpack<OriASTNode>(subNodes[0]);
+                ASTNode *posFactor = new PosFactor(
+                        Unpack<Factor>(subNodes[1]), invSymbol->Line, invSymbol->Column);
+                return std::unique_ptr<ASTNode>(posFactor);
             }
             if (expressionFirst == "(") {
                 //factor -> ( expression )

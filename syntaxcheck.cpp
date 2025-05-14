@@ -156,21 +156,24 @@ namespace AbstractSyntaxTree {
 
     std::unique_ptr<TypeBase> ParameterList::Check(SymbolTable &table, bool &ok) {
         std::vector<std::unique_ptr<TypeBase>> types;
-        for (auto &parameter: parameters) {
-            auto pType(parameter->Check(table, ok));
-            auto &identifiers = parameter->identifiers;
-            for (int i = 0; i < identifiers->identifiers.size(); i++) {
-                std::string id = identifiers->identifiers[i];
-                CheckDuplicateIdentifier(table, ok, id, identifiers->Lines[i], identifiers->Columns[i],
-                                         "parameter list");
-                if (ok) {
-                    table.InsertSymbol(id, pType->Copy(), false, "");
+        if(!parameters.empty() && parameters[0] != nullptr) {
+            for (auto &parameter: parameters) {
+                auto pType(parameter->Check(table, ok));
+                auto &identifiers = parameter->identifiers;
+                for (int i = 0; i < identifiers->identifiers.size(); i++) {
+                    std::string id = identifiers->identifiers[i];
+                    CheckDuplicateIdentifier(table, ok, id, identifiers->Lines[i], identifiers->Columns[i],
+                                             "parameter list");
+                    if (ok) {
+                        table.InsertSymbol(id, pType->Copy(), false, "");
+                    }
+                    types.push_back(pType->Copy());
                 }
-                types.push_back(pType->Copy());
             }
+            TypeBase *tupleType = new TupleType(std::move(types));
+            return std::unique_ptr<TypeBase>(tupleType);
         }
-        TypeBase *tupleType = new TupleType(std::move(types));
-        return std::unique_ptr<TypeBase>(tupleType);
+        return GenType(VOID);
     }
 
     std::unique_ptr<TypeBase> Variable::Check(SymbolTable &table, bool &ok) {
@@ -276,6 +279,15 @@ namespace AbstractSyntaxTree {
         return ret;
     }
 
+    std::unique_ptr<TypeBase> PosFactor::Check(SymbolTable &table, bool &ok) {
+        TypeBase *fac = new RValueType(subFactor->Check(table, ok));
+        std::string errMsg;
+        auto ret = fac->CalcType(GenType(INTEGER), "+", ok, errMsg);
+        if (!errMsg.empty())
+            logErrMsg(Line, Column, errMsg);
+        return ret;
+    }
+
     std::unique_ptr<TypeBase> VariableFactor::Check(SymbolTable &table, bool &ok) {
         return variable->Check(table, ok);
     }
@@ -337,11 +349,14 @@ namespace AbstractSyntaxTree {
 
     std::unique_ptr<TypeBase> ExpressionList::Check(SymbolTable &table, bool &ok) {
         std::vector<std::unique_ptr<TypeBase>> types;
-        for (auto &expression: expressions) {
-            types.push_back(expression->Check(table, ok));
+        if(expressions[0] != nullptr) {
+            for (auto &expression: expressions) {
+                types.push_back(expression->Check(table, ok));
+            }
+            TypeBase *tupleType = new TupleType(std::move(types));
+            return std::unique_ptr<TypeBase>(tupleType);
         }
-        TypeBase *tupleType = new TupleType(std::move(types));
-        return std::unique_ptr<TypeBase>(tupleType);
+        return GenType(VOID);
     }
 
     std::unique_ptr<TypeBase> VarPart::Check(SymbolTable &table, bool &ok) {

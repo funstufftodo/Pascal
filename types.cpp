@@ -377,6 +377,9 @@ namespace AbstractSyntaxTree {
     }
 
     bool TupleType::InitCompatible(std::unique_ptr<TypeBase> &&anotherType, std::string &errMsg) {
+        if(anotherType == nullptr) {
+            return true;
+        }
         if (anotherType->GetTypeId() != TUPLE) {
             errMsg = "Type " + ToString() + "cannot be initialized by " + anotherType->ToString();
             return false;
@@ -423,12 +426,20 @@ namespace AbstractSyntaxTree {
     }
 
     std::unique_ptr<TypeBase> FuncType::Copy() {
-        TypeBase *result = new FuncType(UniquePtrCast<TupleType>(argTypes->Copy()), retType->Copy());
+        TypeBase *result;
+        if(argTypes == nullptr) {
+            result = new FuncType(std::make_unique<TupleType>(), retType->Copy());
+        } else {
+            result = new FuncType(UniquePtrCast<TupleType>(argTypes->Copy()), retType->Copy());
+        }
         return std::unique_ptr<TypeBase>(result);
     }
 
     std::unique_ptr<TypeBase>
     FuncType::CalcFuncType(std::unique_ptr<TupleType> &&argTypes, bool &ok, std::string &errMsg) {
+        if(argTypes.get() == nullptr || this->argTypes == nullptr) {
+            return retType->Copy();
+        }
         if (!this->argTypes->InitCompatible(std::move(argTypes), errMsg)) {
             ok = false;
             errMsg = "Function args not compatible " + errMsg;
