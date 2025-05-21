@@ -11,6 +11,7 @@ namespace Utils {
 
     const int EPS = 0;
     const int END = INT_MAX;
+    const int Break = 100;
 
     typedef std::vector<int> Expression;
     typedef std::vector<int> LL1Item;
@@ -75,6 +76,14 @@ namespace Utils {
     }
 
     inline void AddConstantSymbols() {
+        InsertSymbolId(Break, "Break");
+        Symbol breakSymbol(Break, TERMI);
+        Symbols.insert(std::pair<int, Symbol>(Break, breakSymbol));
+
+        InsertSymbolId(101, "while");
+        Symbol whileSymbol(101, TERMI);
+        Symbols.insert(std::pair<int, Symbol>(101, whileSymbol));
+
         InsertSymbolId(EPS, "EPS");
         Symbol epsSymbol(EPS, TERMI);
         Symbols.insert(std::pair<int, Symbol>(EPS, epsSymbol));

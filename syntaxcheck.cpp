@@ -412,6 +412,13 @@ namespace AbstractSyntaxTree {
         return GenType(VOID);
     }
 
+    std::unique_ptr<TypeBase> WhileLoopStatement::Check(SymbolTable &table, bool &ok) {
+        condition->Check(table, ok);
+        if (loopStatement != nullptr)
+            loopStatement->Check(table, ok);
+        return GenType(VOID);
+    }
+
     std::unique_ptr<TypeBase> ReadStatement::Check(SymbolTable &table, bool &ok) {
         variableList->Check(table, ok);
         return GenType(VOID);

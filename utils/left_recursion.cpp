@@ -15,7 +15,7 @@ namespace Utils {
     std::map<int, Symbol> Symbols;
 
     void LoadSymbols(const std::string &pth) {
-        std::ifstream f(pth);
+        std::stringstream f(pth);
         std::string line;
         while (std::getline(f, line)) {
             std::istringstream lstream(line);

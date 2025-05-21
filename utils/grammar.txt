@@ -49,9 +49,11 @@ statement variable
 statement compound_statement
 statement if expression then statement else_part
 statement for id assignop expression to expression do statement
+statement while ( expression ) do statement
 statement read ( variable_list )
 statement write ( expression_list )
 statement EPS
+statement Break
 variable_list variable_list , variable
 variable_list variable
 variable id id_varpart

@@ -27,7 +27,9 @@ namespace CompilerFront {
             "do",
             "read",
             "write",
-            "or"
+            "or",
+            "Break",
+            "while"
     };
 
     std::set<std::string> mulop = {

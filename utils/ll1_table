@@ -90,6 +90,8 @@ if statement
 for statement
 read statement
 write statement
+Break statement
+while statement
 statement
 ; EPS
 id variable
@@ -100,6 +102,8 @@ for for
 read read
 write write
 else EPS
+Break Break
+while while
 variable
 id id
 expression

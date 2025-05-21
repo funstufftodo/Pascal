@@ -464,6 +464,9 @@ namespace AbstractSyntaxTree {
                 //statement -> EPS
                 return std::unique_ptr<ASTNode>();
             }
+            if (expressionFirst == "Break") {
+                return std::unique_ptr<ASTNode>();
+            }
             if (expressionFirst == "compound_statement") {
                 //statement -> compound_statement
                 ASTNode *subCompoundStatement = new SubCompoundStatement(Unpack<CompoundStatement>(subNodes[0]));
@@ -505,6 +508,11 @@ namespace AbstractSyntaxTree {
                         id->Line,
                         id->Column);
                 return std::unique_ptr<ASTNode>(forLoopStatement);
+            }
+            if (expressionFirst == "while") {
+                ASTNode *whileLoopStatement = new WhileLoopStatement(Unpack<Expression>(subNodes[2]),
+                                                                        Unpack<Statement>(subNodes[5]));
+                return std::unique_ptr<ASTNode>(whileLoopStatement);
             }
             if (expressionFirst == "read") {
                 //statement -> read ( variable_list )

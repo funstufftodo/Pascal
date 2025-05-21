@@ -72,6 +72,8 @@ namespace AbstractSyntaxTree {
         return ret;
     }
 
+
+
     std::string VariableDeclaration::GenCCode(SymbolTable &table, bool isRef) {
         //std::cout << "VariableDeclaration" << std::endl;
         std::string ret;
@@ -366,23 +368,7 @@ namespace AbstractSyntaxTree {
         return ret;
     }
 
-    std::string ForLoopStatement::GenCCode(SymbolTable &table, bool isRef) {
-        //std::cout << "ForLoopStatement" << std::endl;
-        std::string ret = "for(";
-        bool has;
-        int layer;
-        auto &type = table.FindSymbol(counter, has, layer)->second.type;
-        std::string counterStr = type->GetTypeId() == REF
-                                 ? std::string("(*") + counter + ")"
-                                 : counter;
-        ret += counterStr + "=" + initExpression->GenCCode(table, false) + ";";
-        ret += counterStr + "<=" + termiExpression->GenCCode(table, false) + ";";
-        ret += counterStr + "++)\n{\n";
-        if (loopStatement != nullptr)
-            ret += loopStatement->GenCCode(table, false);
-        ret += "}\n";
-        return ret;
-    }
+
 
     std::string ReadStatement::GenCCode(SymbolTable &table, bool isRef) {
         //std::cout << "ReadStatement" << std::endl;
@@ -478,6 +464,38 @@ namespace AbstractSyntaxTree {
         table.Step();
         std::string ret = "#include<stdio.h>\n" + programBody->GenCCode(table, isRef);
         table.PopMap();
+        return ret;
+    }
+
+    std::string BreakStatement::GenCCode(SymbolTable &table, bool isRef) {
+        return "break;\n";
+    }
+
+    std::string ForLoopStatement::GenCCode(SymbolTable &table, bool isRef) {
+        //std::cout << "ForLoopStatement" << std::endl;
+        std::string ret = "for(";
+        bool has;
+        int layer;
+        auto &type = table.FindSymbol(counter, has, layer)->second.type;
+        std::string counterStr = type->GetTypeId() == REF
+                                 ? std::string("(*") + counter + ")"
+                                 : counter;
+        ret += counterStr + "=" + initExpression->GenCCode(table, false) + ";";
+        ret += counterStr + "<=" + termiExpression->GenCCode(table, false) + ";";
+        ret += counterStr + "++)\n{\n";
+        if (loopStatement != nullptr)
+            ret += loopStatement->GenCCode(table, false);
+        ret += "}\n";
+        return ret;
+    }
+
+    std::string WhileLoopStatement::GenCCode(SymbolTable &table, bool isRef) {
+        std::string ret = "while( ";
+        ret += condition->GenCCode(table, false);
+        ret += " ) {\n";
+        if (loopStatement != nullptr)
+            ret += loopStatement->GenCCode(table, false);
+        ret += "}\n";
         return ret;
     }
 }
