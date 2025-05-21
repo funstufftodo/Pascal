@@ -75,6 +75,14 @@ namespace Utils {
     }
 
     inline void AddConstantSymbols() {
+        InsertSymbolId(100, "Break");
+        Symbol breakSymbol(EPS, TERMI);
+        Symbols.insert(std::pair<int, Symbol>(100, breakSymbol));
+
+        InsertSymbolId(101, "while");
+        Symbol whileSymbol(EPS, TERMI);
+        Symbols.insert(std::pair<int, Symbol>(101, whileSymbol));
+
         InsertSymbolId(EPS, "EPS");
         Symbol epsSymbol(EPS, TERMI);
         Symbols.insert(std::pair<int, Symbol>(EPS, epsSymbol));

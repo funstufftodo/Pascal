@@ -245,7 +245,7 @@ namespace AbstractSyntaxTree {
             auto type(variable->Check(table, ok));
             CheckVariableExpected(table, ok, variable->name, variable->Line, variable->Column, "variable list");
 
-            if ((type->GetTypeId() != LVALUE) && (type->GetTypeId() != REF)) {
+            if ((type->GetTypeId() != LVALUE) && (type->GetTypeId() != REF) && (type->GetTypeId() != RVALUE)) {
                 ok = false;
                 logErrMsg(variable->Line, variable->Column, "Error: lvalue/ref expected");
             }
@@ -391,6 +391,13 @@ namespace AbstractSyntaxTree {
             thenStatement->Check(table, ok);
         if (elseStatement != nullptr)
             elseStatement->Check(table, ok);
+        return GenType(VOID);
+    }
+
+    std::unique_ptr<TypeBase> WhileStatement::Check(SymbolTable &table, bool &ok) {
+        initExpression->Check(table, ok);
+        if (loopStatement != nullptr)
+            loopStatement->Check(table, ok);
         return GenType(VOID);
     }
 

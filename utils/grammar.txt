@@ -51,6 +51,10 @@ statement if expression then statement else_part
 statement for id assignop expression to expression do statement
 statement read ( variable_list )
 statement write ( expression_list )
+statement Break
+
+statement while ( expression ) do statement
+
 statement EPS
 variable_list variable_list , variable
 variable_list variable

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 project(compiler)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
 
 add_executable(compiler main.cpp
         utils/utils.h

@@ -311,6 +311,10 @@ namespace AbstractSyntaxTree {
             return std::unique_ptr<TypeBase>(lval);
         }
 
+        int GetRetType() {
+            return retType->GetTypeId();
+        }
+
     private:
         std::unique_ptr<TupleType> argTypes;
         std::unique_ptr<TypeBase> retType;

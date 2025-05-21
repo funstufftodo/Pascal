@@ -150,8 +150,11 @@ namespace AbstractSyntaxTree {
                 ret = std::string("(&(") + ret + "))";
         } else {
             if (targetType->GetTypeId() == FUNC) {
+
                 if (isAssignLeft && table.SymbolAtCurScope(name)) {
                     ret = name + "_ret";
+                } else if(table.SymbolAtCurScope(name) && isRef) {
+                    ret = std::string("(&(") + name + "_ret" + "))";
                 } else {
                     ret = name + "()";
                 }
@@ -175,6 +178,9 @@ namespace AbstractSyntaxTree {
             auto &type = table.FindSymbol(var->name, has, layer)->second.type;
             auto targetType(((WrapperType *) type.get())->DeWrap());
             int tp = targetType->GetTypeId();
+            if(tp == FUNC) {
+                tp = UniquePtrCast<FuncType>(targetType)->GetRetType();
+            }
             switch (tp) {
                 case BOOLEAN:
                     ret += "\%d";
@@ -346,6 +352,10 @@ namespace AbstractSyntaxTree {
         return variable->GenCCode(table, false) + ";\n";
     }
 
+    std::string BreakStatement::GenCCode(SymbolTable &table, bool isRef) {
+        return "break;\n";
+    }
+
     std::string SubCompoundStatement::GenCCode(SymbolTable &table, bool isRef) {
         //std::cout << "SubCompoundStatement" << std::endl;
         std::string ret = "{\n";
@@ -363,6 +373,16 @@ namespace AbstractSyntaxTree {
             ret += "else\n{\n";
             ret += elseStatement->GenCCode(table, false) + "}\n";
         }
+        return ret;
+    }
+
+    std::string WhileStatement::GenCCode(SymbolTable &table, bool isRef) {
+        std::string ret = "while(";
+        ret += initExpression->GenCCode(table, false);
+        ret += ")\n{\n";
+        if (loopStatement != nullptr)
+            ret += loopStatement->GenCCode(table, false);
+        ret += "}\n";
         return ret;
     }
 

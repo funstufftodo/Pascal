@@ -810,6 +810,12 @@ namespace AbstractSyntaxTree {
         std::string GenCCode(SymbolTable &table, bool isRef) override;
     };
 
+    struct BreakStatement : public Statement {
+        BreakStatement() = default;
+
+        std::string GenCCode(SymbolTable &table, bool isRef) override;
+    };
+
     struct SubCompoundStatement : public Statement {
         std::unique_ptr<CompoundStatement> compoundStatement;
 
@@ -845,6 +851,23 @@ namespace AbstractSyntaxTree {
         void Show() override;
 
         void FormatShow(int level) override;
+
+        std::string GenCCode(SymbolTable &table, bool isRef) override;
+    };
+
+    struct WhileStatement : public Statement {
+        std::unique_ptr<Expression> initExpression;
+        std::unique_ptr<Statement> loopStatement; //MAY NULL
+        WhileStatement() = default;
+
+        std::unique_ptr<TypeBase> Check(SymbolTable &table, bool &ok) override;
+
+        WhileStatement(
+                std::unique_ptr<Expression> &&initExpression,
+                std::unique_ptr<Statement> &&loopStatement
+        ) :
+                initExpression(std::move(initExpression)),
+                loopStatement(std::move(loopStatement)) {}
 
         std::string GenCCode(SymbolTable &table, bool isRef) override;
     };

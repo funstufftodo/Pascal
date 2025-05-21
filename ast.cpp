@@ -424,7 +424,7 @@ namespace AbstractSyntaxTree {
                 //parameter -> value_parameter
                 return std::move(subNodes[0]);
             }
-            if(expressionFirst == "EPS") {
+            if (expressionFirst == "EPS") {
                 return std::unique_ptr<ASTNode>();
             }
         }
@@ -460,6 +460,19 @@ namespace AbstractSyntaxTree {
             }
         }
         if (expressionLeft == "statement") {
+            if (expressionFirst == "while") {
+                ASTNode *whileStatement = new WhileStatement(
+
+                        Unpack<Expression>(subNodes[2]),
+                        Unpack<Statement>(subNodes[5]));
+                return std::unique_ptr<ASTNode>(whileStatement);
+            }
+
+            if (expressionFirst == "Break") {
+                //statement -> EPS
+                ASTNode *breakStatement = new BreakStatement();
+                return std::unique_ptr<ASTNode>(breakStatement);
+            }
             if (expressionFirst == "EPS") {
                 //statement -> EPS
                 return std::unique_ptr<ASTNode>();
@@ -563,7 +576,7 @@ namespace AbstractSyntaxTree {
                 return std::unique_ptr<ASTNode>(expression);
             }
 
-            if(expressionFirst == "EPS") {
+            if (expressionFirst == "EPS") {
                 return std::unique_ptr<ASTNode>();
             }
         }

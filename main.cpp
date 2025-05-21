@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 #endif
 
     AddConstantSymbols();
-    LoadSymbols("../utils/grammar.txt");
+    LoadSymbols("grammar");
     ElimLeftRecur();
     CombineLeftCommon();
     GenFirst();
@@ -56,9 +56,9 @@ int main(int argc, char* argv[]) {
 
     CompilerFront::Parser parser(
             inputPath.c_str(),    // 使用命令行输入的路径
-            "./reduced.txt",
-            "./ll1_table.txt",
-            "./sync.txt",
+            "reduced",
+            " ",
+            " ",
             "programstruct");
 
 

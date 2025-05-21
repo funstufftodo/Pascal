@@ -8,6 +8,370 @@
 #include <algorithm>
 #include "utils.h"
 
+const std::string sync = R"(programstruct
+const var array procedure function begin if for read write $
+program_head
+; const var array procedure function begin if for read write $
+program_body
+. array if for read write $
+idlist
+) const var : array procedure function begin if for read write $
+const_declarations
+array if for read write $
+var_declarations
+const array if for read write $
+subprogram_declarations
+const var array if for read write $
+compound_statement
+; . const var array procedure function end if for read write else $
+const_declaration
+; const var array procedure function begin if for read write $
+const_value
+; const var array procedure function begin if for read write $
+num
+; ) , const = + - var array ] procedure function begin end if then for to do read write else relop or mulop $
+var_declaration
+; const var array procedure function begin if for read write $
+type
+; const var procedure function begin if for read write $
+basic_type
+; ) const var array procedure function begin if for read write $
+period
+const var array ] procedure function begin if for read write $
+subprogram
+; const var array begin if for read write $
+subprogram_head
+; const var array begin if for read write $
+subprogram_body
+; array procedure function if for read write $
+formal_parameter
+const var array procedure function begin if for read write $
+parameter_list
+const array procedure function begin if for read write $
+parameter
+const array procedure function begin if for read write $
+var_parameter
+; ) const array procedure function begin if for read write $
+value_parameter
+; ) const var array procedure function begin if for read write $
+statement_list
+const var array procedure function $
+statement
+const var array procedure function $
+variable
+; ) , const = + - var array ] procedure function begin end assignop if then for to do read write else relop or mulop $
+expression
+const var array procedure function begin if for read write $
+else_part
+const var array procedure function begin if for read write $
+variable_list
+) const var array procedure function begin if for read write $
+expression_list
+const var array procedure function begin if for read write $
+id_varpart
+const var array procedure function begin if for read write $
+simple_expression
+; ) , const = var array ] procedure function begin end if then for to do read write else relop $
+term
+; ) , const = var array ] procedure function begin end if then for to do read write else relop or $
+factor
+; ) , const = var array ] procedure function begin end if then for to do read write else relop or mulop $
+idlist_78
+const var array procedure function begin if for read write $
+subprogram_declarations_79
+const var array if for read write $
+const_declaration_80
+const var array procedure function begin if for read write $
+var_declaration_81
+const var array procedure function begin if for read write $
+period_82
+const var array procedure function begin if for read write $
+parameter_list_83
+const var array procedure function begin if for read write $
+statement_list_84
+const var array procedure function begin if for read write $
+variable_list_85
+const var array procedure function begin if for read write $
+expression_list_86
+const var array procedure function begin if for read write $
+simple_expression_87
+const var array procedure function begin if for read write $
+term_88
+const var array procedure function begin if for read write $
+program_head_89
+const var array procedure function begin if for read write $
+statement_90
+const var array procedure function begin if for read write $
+expression_91
+const var array procedure function begin if for read write $
+)";
+
+const std::string ll1 = R"(programstruct
+program program_head
+program_head
+program program
+program_body
+const const_declarations
+var const_declarations
+procedure const_declarations
+function const_declarations
+begin const_declarations
+idlist
+id id
+const_declarations
+const const
+var EPS
+procedure EPS
+function EPS
+begin EPS
+var_declarations
+var var
+procedure EPS
+function EPS
+begin EPS
+subprogram_declarations
+procedure EPS
+function EPS
+begin EPS
+compound_statement
+begin begin
+const_declaration
+id id
+const_value
++ +
+- -
+' '
+digits num
+float num
+num
+digits digits
+float float
+var_declaration
+id idlist
+type
+array array
+integer basic_type
+real basic_type
+boolean basic_type
+char basic_type
+basic_type
+integer integer
+real real
+boolean boolean
+char char
+period
+digits digits
+subprogram
+procedure subprogram_head
+function subprogram_head
+subprogram_head
+procedure procedure
+function function
+subprogram_body
+const const_declarations
+var const_declarations
+begin const_declarations
+formal_parameter
+; EPS
+( (
+: EPS
+parameter_list
+; parameter
+id parameter
+) parameter
+var parameter
+parameter
+; EPS
+id value_parameter
+) EPS
+var var_parameter
+var_parameter
+var var
+value_parameter
+id idlist
+statement_list
+; statement
+id statement
+begin statement
+end statement
+if statement
+for statement
+read statement
+write statement
+Break statement
+while statement
+statement
+; EPS
+id variable
+begin compound_statement
+end EPS
+if if
+for for
+read read
+write write
+else EPS
+Break Break
+while while
+variable
+id id
+expression
+; EPS
+id simple_expression
+( simple_expression
+) EPS
+, EPS
++ simple_expression
+- simple_expression
+] EPS
+digits simple_expression
+end EPS
+then EPS
+to EPS
+do EPS
+else EPS
+not simple_expression
+float simple_expression
+else_part
+; EPS
+end EPS
+else EPS else
+variable_list
+id variable
+expression_list
+id expression
+( expression
+) expression
+, expression
++ expression
+- expression
+] expression
+digits expression
+not expression
+float expression
+id_varpart
+; EPS
+( (
+) EPS
+, EPS
+= EPS
++ EPS
+- EPS
+[ [
+] EPS
+end EPS
+assignop EPS
+then EPS
+to EPS
+do EPS
+else EPS
+relop EPS
+or EPS
+mulop EPS
+simple_expression
+id term
+( term
++ term
+- term
+digits term
+not term
+float term
+term
+id factor
+( factor
++ factor
+- factor
+digits factor
+not factor
+float factor
+factor
+id variable
+( (
++ +
+- -
+digits num
+not not
+float num
+idlist_78
+) EPS
+, ,
+: EPS
+subprogram_declarations_79
+procedure subprogram
+function subprogram
+begin EPS
+const_declaration_80
+; EPS ;
+var_declaration_81
+; EPS ;
+period_82
+, ,
+] EPS
+parameter_list_83
+; ;
+) EPS
+statement_list_84
+; ;
+end EPS
+variable_list_85
+) EPS
+, ,
+expression_list_86
+) EPS
+, ,
+] EPS
+simple_expression_87
+; EPS
+) EPS
+, EPS
+= EPS
++ +
+- -
+] EPS
+end EPS
+then EPS
+to EPS
+do EPS
+else EPS
+relop EPS
+or or
+term_88
+; EPS
+) EPS
+, EPS
+= EPS
++ EPS
+- EPS
+] EPS
+end EPS
+then EPS
+to EPS
+do EPS
+else EPS
+relop EPS
+or EPS
+mulop mulop
+program_head_89
+; EPS
+( (
+statement_90
+; EPS
+end EPS
+assignop assignop
+else EPS
+expression_91
+; EPS
+) EPS
+, EPS
+= =
+] EPS
+end EPS
+then EPS
+to EPS
+do EPS
+else EPS
+relop relop
+)";
+
 namespace Utils {
 
     std::map<int, std::set<int>> FirstSet;
@@ -542,7 +906,7 @@ namespace Utils {
     }
 
     void LoadLL1Table(std::string tablePath, std::string syncPath) {
-        std::ifstream f(tablePath);
+        std::stringstream f(ll1);
         std::string line = "";
         int curSymbol;
         while (std::getline(f, line)) {
@@ -564,9 +928,8 @@ namespace Utils {
                 LL1Table.find(curSymbol)->second.insert(std::pair<int, LL1Item>(sb, item));
             }
         }
-        f.close();
 
-        f = std::ifstream(syncPath);
+        f = std::stringstream(sync);
         line = "";
         while (std::getline(f, line)) {
             curSymbol = SymbolNameMap.find(line)->second;
@@ -580,6 +943,5 @@ namespace Utils {
             }
             SyncTable.insert(std::pair<int, std::set<int>>(curSymbol, syncSet));
         }
-        f.close();
     }
 }

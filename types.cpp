@@ -387,6 +387,10 @@ namespace AbstractSyntaxTree {
 
         auto another(UniquePtrCast<TupleType>(anotherType));
         if (another->subTypes.size() != subTypes.size()) {
+            if (anotherType == nullptr) {
+                errMsg = "Type " + ToString() + "cannot be initialized by null";
+                return false;
+            }
             errMsg = "Type " + ToString() + "cannot be initialized by " + anotherType->ToString();
             return false;
         }
@@ -422,6 +426,9 @@ namespace AbstractSyntaxTree {
     }
 
     std::string FuncType::ToString() {
+        if(argTypes == nullptr || retType == nullptr) {
+            return "FUNCTION";
+        }
         return "FUNCTION " + argTypes->ToString() + retType->ToString();
     }
 

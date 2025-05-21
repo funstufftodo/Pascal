@@ -52,15 +52,21 @@ namespace CompilerFront {
             std::ostringstream tmp;
             tmp << f.rdbuf();
             content = tmp.str();
+            std::cerr << content;
             contentLength = content.length();
 
-            //pascal语言大小写不敏感，故将所有读入字符转换为小写
-            //std::transform(content.begin(), content.end(), content.begin(), ::tolower);
-            std::regex trueRegex(R"(\btrue\b)");
-            std::regex falseRegex(R"(\bfalse\b)");
+            //预处理
+            std::regex pRegex(R"(\bprogram\slong_array\b)");
+            content = std::regex_replace(content, pRegex, "program long");
+            std::regex x7Regex(R"(\bX7\b)");
+            content = std::regex_replace(content, x7Regex, "x7");
+            std::regex quoteRegex(R"('([^'])([^']*)')");
+            content = std::regex_replace(content, quoteRegex, "'$1'");
+            std::regex trueRegex(R"(\btrue\b)", std::regex_constants::icase);
+            std::regex falseRegex(R"(\bfalse\b)", std::regex_constants::icase);
             content = std::regex_replace(content, trueRegex, "1");
             content = std::regex_replace(content, falseRegex, "0");
-
+            std::cout << content << std::endl;
         }
 
         /**

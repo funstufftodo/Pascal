@@ -7,6 +7,187 @@
 #include <algorithm>
 #include "utils.h"
 
+const std::string grammar = R"(programstruct program_head ; program_body .
+program_head program id ( idlist )
+program_head program id
+program_body const_declarations var_declarations subprogram_declarations compound_statement
+idlist idlist , id
+idlist id
+const_declarations const const_declaration ;
+const_declarations EPS
+const_declaration const_declaration ; id = const_value
+const_declaration id = const_value
+const_value + num
+const_value - num
+const_value num
+const_value ' letter '
+var_declarations var var_declaration ;
+var_declarations EPS
+var_declaration var_declaration ; idlist : type
+var_declaration idlist : type
+type basic_type
+type array [ period ] of basic_type
+basic_type integer
+basic_type real
+basic_type boolean
+basic_type char
+period period , digits .. digits
+period digits .. digits
+subprogram_declarations subprogram_declarations subprogram ;
+subprogram_declarations EPS
+subprogram subprogram_head ; subprogram_body
+subprogram_head procedure id formal_parameter
+subprogram_head function id formal_parameter : basic_type
+formal_parameter ( parameter_list )
+formal_parameter EPS
+parameter_list parameter_list ; parameter
+parameter_list parameter
+parameter var_parameter
+parameter value_parameter
+
+parameter EPS
+
+var_parameter var value_parameter
+value_parameter idlist : basic_type
+subprogram_body const_declarations var_declarations compound_statement
+compound_statement begin statement_list end
+statement_list statement_list ; statement
+statement_list statement
+statement variable assignop expression
+statement variable
+statement compound_statement
+statement if expression then statement else_part
+statement for id assignop expression to expression do statement
+statement read ( variable_list )
+statement write ( expression_list )
+statement Break
+
+statement while ( expression ) do statement
+
+statement EPS
+variable_list variable_list , variable
+variable_list variable
+variable id id_varpart
+id_varpart [ expression_list ]
+id_varpart ( expression_list )
+id_varpart EPS
+else_part else statement
+else_part EPS
+expression_list expression_list , expression
+expression_list expression
+expression simple_expression relop simple_expression
+expression simple_expression = simple_expression
+expression simple_expression
+expression EPS
+simple_expression simple_expression + term
+simple_expression simple_expression - term
+simple_expression simple_expression or term
+simple_expression term
+term term mulop factor
+term factor
+factor num
+factor variable
+factor ( expression )
+factor not factor
+factor - factor
+factor + factor
+num digits
+num float)";
+
+const std::string reduced = R"(programstruct program_head ; program_body .
+program_head program id program_head_89
+program_body const_declarations var_declarations subprogram_declarations compound_statement
+idlist id idlist_78
+const_declarations EPS
+const_declarations const const_declaration ;
+var_declarations EPS
+var_declarations var var_declaration ;
+subprogram_declarations EPS subprogram_declarations_79
+compound_statement begin statement_list end
+const_declaration id = const_value const_declaration_80
+const_value + num
+const_value num
+const_value - num
+const_value ' letter '
+num digits
+num float
+var_declaration idlist : type var_declaration_81
+type basic_type
+type array [ period ] of basic_type
+basic_type integer
+basic_type real
+basic_type boolean
+basic_type char
+period digits .. digits period_82
+subprogram subprogram_head ; subprogram_body
+subprogram_head procedure id formal_parameter
+subprogram_head function id formal_parameter : basic_type
+subprogram_body const_declarations var_declarations compound_statement
+formal_parameter EPS
+formal_parameter ( parameter_list )
+parameter_list parameter parameter_list_83
+parameter var_parameter
+parameter value_parameter
+var_parameter var value_parameter
+value_parameter idlist : basic_type
+statement_list statement statement_list_84
+statement EPS
+statement compound_statement
+statement variable statement_90
+statement if expression then statement else_part
+statement for id assignop expression to expression do statement
+statement while expression do statement
+statement read ( variable_list )
+statement write ( expression_list )
+variable id id_varpart
+expression simple_expression expression_91
+else_part EPS
+else_part else statement
+variable_list variable variable_list_85
+expression_list expression expression_list_86
+id_varpart EPS
+id_varpart ( expression_list )
+id_varpart [ expression_list ]
+simple_expression term simple_expression_87
+term factor term_88
+factor ( expression )
+factor num
+factor ' letter '
+factor - factor
+factor variable
+factor not factor
+idlist_78 EPS
+idlist_78 , id idlist_78
+subprogram_declarations_79 EPS
+subprogram_declarations_79 subprogram ; subprogram_declarations_79
+const_declaration_80 EPS
+const_declaration_80 ; id = const_value const_declaration_80
+var_declaration_81 EPS
+var_declaration_81 ; idlist : type var_declaration_81
+period_82 EPS
+period_82 , digits .. digits period_82
+parameter_list_83 EPS
+parameter_list_83 ; parameter parameter_list_83
+statement_list_84 EPS
+statement_list_84 ; statement statement_list_84
+variable_list_85 EPS
+variable_list_85 , variable variable_list_85
+expression_list_86 EPS
+expression_list_86 , expression expression_list_86
+simple_expression_87 EPS
+simple_expression_87 + term simple_expression_87
+simple_expression_87 - term simple_expression_87
+simple_expression_87 or term simple_expression_87
+term_88 EPS
+term_88 mulop factor term_88
+program_head_89 EPS
+program_head_89 ( idlist )
+statement_90 EPS
+statement_90 assignop expression
+expression_91 EPS
+expression_91 = simple_expression
+expression_91 relop simple_expression)";
+
 namespace Utils {
 
     int SymbolID;
@@ -15,43 +196,82 @@ namespace Utils {
     std::map<int, Symbol> Symbols;
 
     void LoadSymbols(const std::string &pth) {
-        std::ifstream f(pth);
-        std::string line;
-        while (std::getline(f, line)) {
-            std::istringstream lstream(line);
-            std::string symbolName;
-            bool isLeftPart = true;
-            int leftPartId = 0;
-            Expression expression;
-            while (lstream >> symbolName) {
-                if (symbolName.empty())
-                    continue;
-                auto it = SymbolNameMap.find(symbolName);
-                int id;
-                if (it == SymbolNameMap.end()) {
-                    id = ++SymbolID;
-                    SymbolNameMap[symbolName] = id;
-                    InvSymbolNameMap[id] = symbolName;
-                    Symbols[id] = Symbol(id, TERMI);
-                } else {
-                    id = it->second;
+        if(pth == "grammar") {
+            std::stringstream f(grammar);
+            std::string line;
+            while (std::getline(f, line)) {
+                std::istringstream lstream(line);
+                std::string symbolName;
+                bool isLeftPart = true;
+                int leftPartId = 0;
+                Expression expression;
+                while (lstream >> symbolName) {
+                    if (symbolName.empty())
+                        continue;
+                    auto it = SymbolNameMap.find(symbolName);
+                    int id;
+                    if (it == SymbolNameMap.end()) {
+                        id = ++SymbolID;
+                        SymbolNameMap[symbolName] = id;
+                        InvSymbolNameMap[id] = symbolName;
+                        Symbols[id] = Symbol(id, TERMI);
+                    } else {
+                        id = it->second;
+                    }
+                    if (isLeftPart) {
+                        isLeftPart = false;
+                        leftPartId = id;
+                    } else {
+                        expression.push_back(id);
+                    }
                 }
-                if (isLeftPart) {
-                    isLeftPart = false;
-                    leftPartId = id;
-                } else {
-                    expression.push_back(id);
+                if (!expression.empty()) {
+                    int st = expression[0];
+                    expression.erase(expression.begin());
+                    Symbol &lsymbol = Symbols[leftPartId];
+                    lsymbol.type = NON_TERMI;
+                    lsymbol.subExpressions[st].push_back(expression);
                 }
-            }
-            if (!expression.empty()) {
-                int st = expression[0];
-                expression.erase(expression.begin());
-                Symbol &lsymbol = Symbols[leftPartId];
-                lsymbol.type = NON_TERMI;
-                lsymbol.subExpressions[st].push_back(expression);
             }
         }
-        f.close();
+        if(pth == "reduced") {
+            std::stringstream f(reduced);
+            std::string line;
+            while (std::getline(f, line)) {
+                std::istringstream lstream(line);
+                std::string symbolName;
+                bool isLeftPart = true;
+                int leftPartId = 0;
+                Expression expression;
+                while (lstream >> symbolName) {
+                    if (symbolName.empty())
+                        continue;
+                    auto it = SymbolNameMap.find(symbolName);
+                    int id;
+                    if (it == SymbolNameMap.end()) {
+                        id = ++SymbolID;
+                        SymbolNameMap[symbolName] = id;
+                        InvSymbolNameMap[id] = symbolName;
+                        Symbols[id] = Symbol(id, TERMI);
+                    } else {
+                        id = it->second;
+                    }
+                    if (isLeftPart) {
+                        isLeftPart = false;
+                        leftPartId = id;
+                    } else {
+                        expression.push_back(id);
+                    }
+                }
+                if (!expression.empty()) {
+                    int st = expression[0];
+                    expression.erase(expression.begin());
+                    Symbol &lsymbol = Symbols[leftPartId];
+                    lsymbol.type = NON_TERMI;
+                    lsymbol.subExpressions[st].push_back(expression);
+                }
+            }
+        }
     }
 
     void Show() {

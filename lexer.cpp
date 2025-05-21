@@ -4,6 +4,8 @@
 namespace CompilerFront {
 
     std::set<std::string> keywords = {
+            "while",
+            "Break",
             "not",
             "program",
             "const",

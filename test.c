@@ -1,8 +1,20 @@
 #include<stdio.h>
-int a;
+int fun()
+{
+int fun_ret;
+int a,b;
+if(a>0)
+{
+fun_ret = 1;
+}
+else
+{
+printf("%d",a);
+}
+return fun_ret;
+}
 int main()
 {
-a = 3;
-printf("%d",a);
+printf("%d",fun());
 return 0;
 }

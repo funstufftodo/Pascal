@@ -148,7 +148,6 @@ namespace CompilerFront {
             } else {
                 std::cerr << "Error: expression[0] (" << expression[0] << ") not found in InvSymbolNameMap." << std::endl;
                 ok = false;
-                // 不直接返回，因为可能还需要清理栈，但 ReduceInfo 不应该被推入
             }
             if (allEps) {
                 std::vector<std::unique_ptr<AbstractSyntaxTree::ASTNode>> empty;
